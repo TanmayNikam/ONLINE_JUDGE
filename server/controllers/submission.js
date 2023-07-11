@@ -9,7 +9,7 @@ exports.getSubmissions = async (req, res) => {
     const allSubmissions = await Submissions.find(filter)
       .skip(offset)
       .limit(limit)
-      .select("problem language verdict timestamp");
+      .select("problem language verdict createdAt");
 
     res.status(200).json({
       allSubmissions,
@@ -46,7 +46,7 @@ exports.getSubmissionsOfUser = async (req, res) => {
       const allSubmissions = await Submissions.find(filter)
         .skip(offset)
         .limit(limit)
-        .select("problem language verdict timestamp");
+        .select("problem language verdict createdAt");
   
       res.status(200).json({
         allSubmissions,
