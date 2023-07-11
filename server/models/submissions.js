@@ -10,6 +10,10 @@ const submissionSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Problem",
     },
+    code: {
+      type: String,
+      required: true,
+    },
     language: {
       type: String,
       enum: ["c", "cpp", "py", "java", "js"],
