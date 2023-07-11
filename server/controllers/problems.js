@@ -36,7 +36,19 @@ exports.getProblemById = async (req, res) => {
 
 exports.addProblem = async (req, res) => {
   try {
-    const newProblem = await Problem.create(req.body);
+    const { title, description, ipFormat, opFormat, difficulty, timelimit } =
+      req.body;
+    // let inputText = text.replace(/\r?\n/g, "\n");
+    // let input = req.body.input.replace;
+
+    const newProblem = await Problem.create({
+      title,
+      description,
+      ipFormat,
+      opFormat,
+      difficulty,
+      timelimit,
+    });
     res.status(201).json({
       message: "Problem added successfully",
       success: true,
