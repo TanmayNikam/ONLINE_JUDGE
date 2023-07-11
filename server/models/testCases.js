@@ -15,4 +15,4 @@ const tcSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("TestCases", tcSchema);
+module.exports = mongoose.model("TestCase", tcSchema);

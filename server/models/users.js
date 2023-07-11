@@ -42,9 +42,10 @@ userSchema.pre("save", async function (next) {
     return next();
   }
 
-  this.password =  bcrypt.hash(this.password, 12);
+  this.password = await bcrypt.hash(this.password, 12);
   next();
 });
+
 
 userSchema.methods.validatePassword = async (input_password, user_password) => {
   return await bcrypt.compare(input_password, user_password);

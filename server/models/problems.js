@@ -7,7 +7,16 @@ const problemScehma = new mongoose.Schema({
   },
   description: {
     type: String,
-    required: String,
+    required: true,
+  },
+  ipFormat: {
+    type: String,
+  },
+  opFormat: {
+    type: String,
+  },
+  constraints:{
+    type:String,
   },
   difficulty: {
     type: String,
@@ -19,7 +28,5 @@ const problemScehma = new mongoose.Schema({
     default: 1000,
   },
 });
-
-
 
 module.exports = mongoose.model("Problem", problemScehma);

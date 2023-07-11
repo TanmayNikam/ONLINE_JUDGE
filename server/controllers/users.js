@@ -1,10 +1,10 @@
 const User = require("../models/users");
 const { errorHandling } = require("../utils/errorHandler");
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
+require("dotenv").config({ path: "../.env" });
 
 const generateToken = (user) => {
-  const token = jwt.sign({ id: user._id }, process.env.MY_SECRET, {
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
     expiresIn: "30d",
   });
   const cookieOptions = {
@@ -16,6 +16,8 @@ const generateToken = (user) => {
   };
 };
 
+// header(hashing algorithm),payload(),signature
+
 exports.signup = async (req, res) => {
   try {
     const { username, name, email, password } = req.body;
@@ -25,7 +27,6 @@ exports.signup = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.log(error);
     errorHandling(res, error, "User");
   }
 };
@@ -34,12 +35,13 @@ exports.login = async (req, res) => {
   try {
     const { username, password } = req.body;
     const user = await User.findOne({ username }).select("+password");
+    console.log(user);
     let isAuthenticated = false;
     if (user)
       isAuthenticated = await user.validatePassword(password, user.password);
     if (!user || !isAuthenticated)
       return res.status(200).json({
-        message: "Invalid Email or Password",
+        message: "Invalid Username or Password",
         success: false,
       });
 
@@ -47,8 +49,7 @@ exports.login = async (req, res) => {
     const { token, cookieOptions } = generateToken(user);
     res.cookie("token", token, cookieOptions);
     res.status(200).json({
-      user,
-      data: token,
+      user, 
       success: true,
       message: "Login Successful",
     });
@@ -74,7 +75,7 @@ exports.isAuthenticated = async (req, res, next) => {
   }
   let decoded_id;
   try {
-    decoded_id = jwt.verify(token, process.env.MY_SECRET);
+    decoded_id = jwt.verify(token, process.env.JWT_SECRET);
   } catch (err) {
     console.log(err);
     return res.status(401).json({
@@ -91,6 +92,20 @@ exports.isAuthenticated = async (req, res, next) => {
   }
   req.user = user;
   next();
+};
+
+exports.isAdmin = async (req, res, next) => {
+  try {
+    if (!req.user.isadmin)
+      return res.status(401).json({
+        message: "Requires Admin Access",
+        success: false,
+      });
+    next();
+  } catch (error) {
+    console.log(error);
+    res.json({ message: error.message, success: false });
+  }
 };
 
 exports.getUser = async (req, res) => {
