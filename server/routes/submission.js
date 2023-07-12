@@ -6,10 +6,14 @@ const submissionsController = require("../controllers/submission");
 
 // get submissions
 router.get("/", submissionsController.getSubmissions);
-router.get("/user", 
-userController.isAuthenticated,
-submissionsController.getSubmissionsOfUser);
+router.get(
+  "/user",
+  userController.isAuthenticated,
+  submissionsController.getSubmissionsOfUser
+);
+
 router.get("/:submissionId", submissionsController.getSubmissionById);
+router.get("/code/:submissionId", submissionsController.getSubmissionCode);
 
 //add Submissions
 router.post(
@@ -17,6 +21,5 @@ router.post(
   userController.isAuthenticated,
   submissionsController.addSubmission
 );
-
 
 module.exports = router;
