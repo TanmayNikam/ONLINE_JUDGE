@@ -1,9 +1,6 @@
 const { exec, spawn } = require("child_process");
 const path = require("path");
-// const { logger } = require("../utils");
 
-// name => it is the name to be given to the container
-// image => it is the name of image whose container is to be created
 const createContainer = ({ name, image }) => {
   return new Promise((resolve, reject) => {
     exec(
@@ -17,32 +14,24 @@ const createContainer = ({ name, image }) => {
   });
 };
 
-// it takes almost 10sec to stop the container, as it
-// sends sigterm and then sigkill signals to processes inside container
 const stopContainer = (container_id_name) => {
   return new Promise((resolve, reject) => {
     exec(`docker stop ${container_id_name}`, (error, stdout, stderr) => {
       stdout && console.log("Deleted(stopped) :", stdout);
-      // error && console.log(`${error}`);
-      // stderr && console.log(`${stderr}`);
       resolve();
     });
   });
 };
 
-// it stops the container instantly, as it brutally stops
 const killContainer = (container_id_name) => {
   return new Promise((resolve, reject) => {
     exec(`docker kill ${container_id_name}`, (error, stdout, stderr) => {
       stdout && console.log("Deleted(stopped) :", stdout);
-      // error && console.log(`${error}`);
-      // stderr && console.log(`${stderr}`);
       resolve();
     });
   });
 };
 
-// this fn copies file from server to docker container (in root directory)
 const copyFilesToDocker = (filePath, containerId) => {
   const filename = path.basename(filePath);
   return new Promise((resolve, reject) => {
@@ -57,12 +46,6 @@ const copyFilesToDocker = (filePath, containerId) => {
   });
 };
 
-/**
- * @description This fn deletes file/files from a container
- * @param {Array | String} filename
- * @param {String} containerId
- * @return {Promise}
- */
 const deleteFileDocker = (filename, containerId) => {
   return new Promise(async (resolve, reject) => {
     const fileExists = await fileExistsDocker(filename, containerId);
@@ -89,25 +72,10 @@ const fileExistsDocker = (filename, containerId) => {
   });
 };
 
-// ############################################################
-
-/**
- * @callback CompExecCmd
- * @param {string} id - FileName or FileId
- * @returns {string}
- */
-/**
- * @typedef {Object} ExecDetail
- * @property {(CompExecCmd|null)} compilerCmd
- * @property {CompExecCmd} executorCmd
- */
-/**
- * @type {Object.<string, ExecDetail>}
- */
 const details = {
   c: {
     compilerCmd: (id) => `gcc ${id}.c -o ${id}.out -lpthread -lrt`,
-    executorCmd: (id, testcase) => `echo "${testcase}"|./${id}.out`,
+    executorCmd: (id) => `./${id}.out`,
   },
   cpp: {
     compilerCmd: (id) => `g++ ${id}.cpp -o ${id}.out`,
@@ -136,7 +104,7 @@ const compile = (containerId, filename, language) => {
   return new Promise((resolve, reject) => {
     if (!command) return resolve(filename);
     exec(`docker exec ${containerId} ${command}`, (error, stdout, stderr) => {
-      error && reject({ msg: "on error", error, stderr });
+      error && reject({ msg: "on compile error", error, stderr });
       stderr && reject({ msg: "on stderr", stderr });
       resolve(id);
     });
@@ -144,11 +112,13 @@ const compile = (containerId, filename, language) => {
 };
 
 // Execute
+// spawn("docker", ["exec", "-i", containerId, "sh -c", command]
 const execute = (containerId, id, testInput, language) => {
   const command = details[language].executorCmd
     ? details[language].executorCmd(id)
     : null;
   return new Promise((resolve, reject) => {
+    let codeOutput = "";
     if (!command) return reject("Language Not Supported");
     const cmd = spawn("docker", ["exec", "-i", `${containerId} ${command}`], {
       shell: true,
@@ -157,26 +127,25 @@ const execute = (containerId, id, testInput, language) => {
       console.log("");
     });
     cmd.stdin.on("error", (err) => {
+      //stdin not working
       reject({ msg: "on stdin error", error: `${err}` });
     });
     cmd.stdin.write(testInput);
     cmd.stdin.end();
     cmd.stderr.on("data", (data) => {
-      reject({ msg: "on stderr", stderr: `${data}` });
+      reject({ msg: "on execute stderr", stderr: `${data}` });
     });
     cmd.stdout.on("data", (data) => {
-      console.log("data: ", data);
-      const exOut = `${data}`.trim();
-      resolve(exOut);
+      codeOutput += `${data}`;
     });
-    cmd.on("exit", (exitCode, signal) => {});
+    cmd.stdout.on("exit", (exitCode, signal) => {});
     cmd.on("error", (error) => {
       reject({ msg: "on error", error: `${error.name} => ${error.message}` });
     });
-    // cmd.on("close", (code) => {
-    //   // console.log(`child process exited with code ${code} `);
-    //   resolve("");
-    // });
+    cmd.on("close", (code) => {
+      codeOutput = codeOutput.trim();
+      resolve(codeOutput);
+    });
   });
 };
 

@@ -17,6 +17,7 @@ const imageNames = [
   "node:16.17.0-bullseye-slim",
   "openjdk:20-slim",
 ];
+
 const containerNames = [
   "gcc-oj-container",
   "py-oj-container",
@@ -31,6 +32,7 @@ const initDockerContainer = (image, index) => {
   return new Promise(async (resolve, reject) => {
     try {
       // check and kill already running container
+
       await killContainer(name);
       // now create new container of image
       const data = await createContainer({ name, image });
@@ -80,9 +82,7 @@ const languageSpecificDetails = {
   },
 };
 
-// (data) => (data ? data.split(" ").join("\n") : "");
-
-const codeDirectory = path.join(__dirname, "codeFiles");
+const codeDirectory = path.join(__dirname, "../../../codeFiles");
 
 // for the first time create 'codeFiles' directory
 if (!fs.existsSync(codeDirectory)) {
@@ -111,7 +111,6 @@ const deleteFile = (filepath) => {
 
   if (!fs.existsSync(filepath)) return;
   fs.unlinkSync(filepath);
-  // console.log("Unlinked :", path.basename(filepath));
 };
 
 const stderrMsgFn = ({
@@ -131,11 +130,9 @@ const languageErrMsg = `Please select a language / valid language.
 Or may be this language is not yet supported !`;
 
 const execCodeAgainstTestcases = (filePath, testcases, language) => {
-  // check if language is supported or not
   if (!languageSpecificDetails[language]) return { msg: languageErrMsg };
 
   let containerId = languageSpecificDetails[language].containerId();
-  // if (!containerId) return { msg: languageErrMsg };
 
   if (!filePath.includes("\\") && !filePath.includes("/"))
     filePath = path.join(codeDirectory, filePath);
@@ -145,18 +142,12 @@ const execCodeAgainstTestcases = (filePath, testcases, language) => {
     try {
       filename = await copyFilesToDocker(filePath, containerId);
       const compiledId = await compile(containerId, filename, language);
-      // languageSpecificDetails[language].inputFunction
-      //     ? languageSpecificDetails[language].inputFunction(test)
-      //     : input,
+
       for (let index = 0; index < testcases.length; ++index) {
-        const {input,output} = testcases[index];
-        const exOut = await execute(
-          containerId,
-          compiledId,
-          input,
-          language
-        );
-        // if socket connection established then send to client the index of passed test case
+        let { input, output } = testcases[index];
+
+        const exOut = await execute(containerId, compiledId, input, language);
+
         if (exOut !== output) {
           reject({
             msg: "on wrong answer",
@@ -175,24 +166,26 @@ const execCodeAgainstTestcases = (filePath, testcases, language) => {
       reject(error);
     } finally {
       try {
-        // if (filename) await deleteFileDocker(filename, containerId);
-
-        // if (filename && languageSpecificDetails[language].compiledExtension) {
-        //   // TODO: Update 'Solution.class' to id.class
-        //   await deleteFileDocker(
-        //     language === "java"
-        //       ? "Solution.class"
-        //       : filename.split(".")[0] +
-        //           "." +
-        //           languageSpecificDetails[language].compiledExtension,
-        //     containerId
-        //   );
-        // }
+        if (filename) {
+          deleteFile(filename);
+          await deleteFileDocker(filename, containerId);
+        }
+        if (filename && languageSpecificDetails[language].compiledExtension) {
+          // TODO: Update 'Solution.class' to id.class
+          await deleteFileDocker(
+            language === "java"
+              ? "Solution.class"
+              : filename.split(".")[0] +
+                  "." +
+                  languageSpecificDetails[language].compiledExtension,
+            containerId
+          );
+        }
       } catch (error) {
         console.error(
           "Caught some errors while deleting files from Docker Container",
           error,
-          containerId,
+          containerId
           // dateTimeNowFormated()
         );
       }
@@ -246,7 +239,7 @@ const execCode = async (filePath, language, inputString) => {
       console.error(
         "Caught some errors while deleting files from Docker Container",
         error,
-        containerId,
+        containerId
         // dateTimeNowFormated()
       );
     }
