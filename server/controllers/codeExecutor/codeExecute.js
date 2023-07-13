@@ -141,17 +141,26 @@ const execCodeAgainstTestcases = (filePath, testcases, language) => {
     let filename = null;
     try {
       filename = await copyFilesToDocker(filePath, containerId);
-      const compiledId = await compile(containerId, filename, language);
+      let compiledId;
+      const compiled = await compile(containerId, filename, language);
+      if ("stderr" in compiled) reject(compiled);
+      else compiledId = compiled.id;
+
+      let maxTime = 0;
 
       for (let index = 0; index < testcases.length; ++index) {
         let { input, output } = testcases[index];
 
+        const startTime = Date.now();
         const exOut = await execute(containerId, compiledId, input, language);
-
+        const executedTime = Date.now() - startTime;
+        maxTime = Math.max(maxTime, executedTime);
         if (exOut !== output) {
           reject({
-            msg: "on wrong answer",
+            msg: "Wrong Answer",
+            time: maxTime,
             stderr: stderrMsgFn({
+              index,
               input,
               output,
               exOut,
@@ -161,13 +170,12 @@ const execCodeAgainstTestcases = (filePath, testcases, language) => {
         }
       }
 
-      resolve({ msg: "All Test Cases Passed" });
+      resolve({ msg: "Accepted", time: maxTime });
     } catch (error) {
       reject(error);
     } finally {
       try {
         if (filename) {
-          deleteFile(filename);
           await deleteFileDocker(filename, containerId);
         }
         if (filename && languageSpecificDetails[language].compiledExtension) {
@@ -186,7 +194,6 @@ const execCodeAgainstTestcases = (filePath, testcases, language) => {
           "Caught some errors while deleting files from Docker Container",
           error,
           containerId
-          // dateTimeNowFormated()
         );
       }
     }
@@ -240,7 +247,6 @@ const execCode = async (filePath, language, inputString) => {
         "Caught some errors while deleting files from Docker Container",
         error,
         containerId
-        // dateTimeNowFormated()
       );
     }
   }

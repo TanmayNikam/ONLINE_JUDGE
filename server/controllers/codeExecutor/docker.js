@@ -105,8 +105,8 @@ const compile = (containerId, filename, language) => {
     if (!command) return resolve(filename);
     exec(`docker exec ${containerId} ${command}`, (error, stdout, stderr) => {
       error && reject({ msg: "on compile error", error, stderr });
-      stderr && reject({ msg: "on stderr", stderr });
-      resolve(id);
+      stderr && reject({ msg: "on compile stderr", stderr });
+      resolve({ id });
     });
   });
 };

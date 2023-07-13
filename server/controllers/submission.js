@@ -6,6 +6,8 @@ const {
   execCodeAgainstTestcases,
 } = require("./codeExecutor/codeExecute");
 
+const { addQueryqueue } = require("./codeExecutor/queryQueue");
+
 exports.getSubmissions = async (req, res) => {
   try {
     const filter = { ...req.body };
@@ -93,17 +95,23 @@ exports.addSubmission = async (req, res) => {
 
     // let inputText = text.replace(/\r?\n/g, "\n");
     // let input = req.body.input.replace;
-    const testCases = await TestCase.find({ problem });
 
-    const verdict = await validateSubmission(code, language, testCases);
-    console.log(verdict);
-
-    const newSubmisson = await Submissions.create({
+    const newSubmission = await Submissions.create({
       user,
       problem,
       code,
       language,
     });
+
+    const { filepath, filename } = createFile(language, code);
+
+    const queryData = {
+      filepath,
+      problemId: problem,
+      submissionId: newSubmission._id,
+    };
+
+    await addQueryqueue(queryData);
 
     res.status(201).json({
       message: "Submisson added successfully",
@@ -119,6 +127,7 @@ exports.addSubmission = async (req, res) => {
 const validateSubmission = async (code, language, testCases) => {
   try {
     const { filepath, filename } = createFile(language, code);
+    addQueryqueue({ filepath, testcases });
     const verdict = await execCodeAgainstTestcases(
       filepath,
       testCases,

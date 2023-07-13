@@ -30,7 +30,7 @@ const submissionSchema = new mongoose.Schema(
         "Wrong Answer",
       ],
       default: "Pending",
-    },
+    }
   },
   { timestamps: true }
 );
