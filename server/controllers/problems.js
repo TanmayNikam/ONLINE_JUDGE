@@ -2,12 +2,7 @@ const Problem = require("../models/problems");
 
 exports.getProblems = async (req, res) => {
   try {
-    const { page } = req.query;
-    const limit = 10,
-      offset = limit * (page - 1);
     const problems = await Problem.find({})
-      .skip(offset)
-      .limit(limit)
       .select("title difficulty _id");
 
     res.status(200).json({

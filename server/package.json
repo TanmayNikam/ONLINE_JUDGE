@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "docker build -t redis-queue-image . && docker run --name redis-queue-container -p 6379:6379 -d redis-queue-image && nodemon server.js"
   },
   "author": "",
   "license": "ISC",

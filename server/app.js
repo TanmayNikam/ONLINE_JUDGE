@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan("tiny"));
 app.use(cors());
 
-app.use("/api/user", userRouter);
+app.use("/api/users", userRouter);
 app.use("/api/problems", problemsRouter);
 app.use("/api/testCase", testCaseRouter);
 app.use("/api/submission", submissionRouter);
