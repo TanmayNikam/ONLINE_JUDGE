@@ -35,7 +35,7 @@ exports.login = async (req, res) => {
   try {
     const { username, password } = req.body;
     const user = await User.findOne({ username }).select("+password");
-    console.log(user);
+  
     let isAuthenticated = false;
     if (user)
       isAuthenticated = await user.validatePassword(password, user.password);

@@ -6,7 +6,9 @@ import Login from "./screens/Login";
 import Register from "./screens/Register";
 import Home from "./screens/Home";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Problems from "./screens/Problems";  
+import Problems from "./screens/Problems";
+import PublicRoute from "./components/PublicRoute";
+import Problem from "./screens/Problem";
 
 function App() {
   return (
@@ -22,7 +24,22 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/problems" element={<Problems />} />
+          <Route
+            path="/problems"
+            element={
+              <PublicRoute>
+                <Problems />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/problems/:problemId"
+            element={
+              <PublicRoute>
+                <Problem />
+              </PublicRoute>
+            }
+          />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Register />} />
         </Routes>

@@ -1,31 +1,39 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { login } from "../apiCalls/user";
+import { getUser, login } from "../apiCalls/user";
+import { useDispatch, useSelector } from "react-redux";
+import { SetUser } from "../redux/userSlice";
+import cookie from "js-cookie";
 
 const Login = () => {
-  const [user, setUser] = useState({
+  const [currentUser, setCurrentUser] = useState({
     username: "",
     password: "",
   });
 
+  const dispatch = useDispatch();
+
   const navigate = useNavigate();
 
   const handleChange = (name) => (e) => {
-    setUser({ ...user, [name]: e.target.value });
+    setCurrentUser({ ...currentUser, [name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (user.username === "" || user.password === "")
+    if (currentUser.username === "" || currentUser.password === "")
       toast.error("Please Fill every field");
     else {
       try {
         // dispatch(ShowLoading());
-        const response = await login(user);
+        const response = await login(currentUser);
         // dispatch(HideLoading());
         if (response.success) {
           toast.success(response.message);
+          // const userResponse = await getUser(cookie.get("token"));
+          // console.log("userResponse", userResponse);
+          // dispatch(SetUser(userResponse.user));
           navigate("/");
         } else {
           toast.error(response.message);
@@ -58,7 +66,7 @@ const Login = () => {
                   id="username"
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   placeholder="Enter your username"
-                  value={user.username}
+                  value={currentUser.username}
                   onChange={handleChange("username")}
                   required
                 />
@@ -74,7 +82,7 @@ const Login = () => {
                   id="password"
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   placeholder="Enter your password"
-                  value={user.password}
+                  value={currentUser.password}
                   onChange={handleChange("password")}
                   required
                 />
