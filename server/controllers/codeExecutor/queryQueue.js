@@ -38,6 +38,7 @@ queryQueue.process(WORKERS_NUMBER, async (data) => {
 
     await Submission.findByIdAndUpdate(submissionId, {
       verdict: verdictMessage,
+      runtime: verdict.time,
     });
   } catch (error) {
     let verdictMessage = "pending";

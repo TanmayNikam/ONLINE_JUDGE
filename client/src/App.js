@@ -9,6 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Problems from "./screens/Problems";
 import PublicRoute from "./components/PublicRoute";
 import Problem from "./screens/Problem";
+import Submissions from "./screens/Submissions";
 
 function App() {
   return (
@@ -38,6 +39,22 @@ function App() {
               <PublicRoute>
                 <Problem />
               </PublicRoute>
+            }
+          />
+          <Route
+            path="/submissions/all/:problemId"
+            element={
+              <PublicRoute>
+                <Submissions />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/submissions/my/:problemId"
+            element={
+              <ProtectedRoute>
+                <Submissions />
+              </ProtectedRoute>
             }
           />
           <Route path="/login" element={<Login />} />

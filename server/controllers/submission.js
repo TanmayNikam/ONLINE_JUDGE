@@ -10,21 +10,16 @@ const { addQueryqueue } = require("./codeExecutor/queryQueue");
 
 exports.getSubmissions = async (req, res) => {
   try {
-    const filter = { ...req.body };
-    const { page } = req.query;
-
-    const limit = 10,
-      offset = limit * (page - 1);
-
+    const { problemId } = req.params;
+    let filter = { problem: problemId };
     const allSubmissions = await Submissions.find(filter)
-      .skip(offset)
-      .limit(limit)
       .select("-code")
+      .sort("-createdAt")
       .populate("user", "username _id")
       .populate("problem", "title _id");
 
     res.status(200).json({
-      allSubmissions,
+      submissions: allSubmissions,
       success: true,
     });
   } catch (error) {
@@ -65,20 +60,17 @@ exports.getSubmissionCode = async (req, res) => {
 
 exports.getSubmissionsOfUser = async (req, res) => {
   try {
+    const { problemId } = req.params;
     const user = req.user._id;
-    const filter = { ...req.body, user };
-    const { page } = req.query;
-    const limit = 10,
-      offset = limit * (page - 1);
+    let filter = { problem: problemId, ...req.body, user };
     const allSubmissions = await Submissions.find(filter)
-      .skip(offset)
-      .limit(limit)
       .select("-code")
+      .sort("-createdAt")
       .populate("user", "username _id")
       .populate("problem", "title _id");
 
     res.status(200).json({
-      allSubmissions,
+      submissions: allSubmissions,
       success: true,
     });
   } catch (error) {
@@ -124,18 +116,18 @@ exports.addSubmission = async (req, res) => {
 };
 
 // Check submissions against testCases
-const validateSubmission = async (code, language, testCases) => {
-  try {
-    const { filepath, filename } = createFile(language, code);
-    addQueryqueue({ filepath, testcases });
-    const verdict = await execCodeAgainstTestcases(
-      filepath,
-      testCases,
-      language
-    );
-    return [verdict, true];
-  } catch (error) {
-    console.log(error);
-    return [error, false];
-  }
-};
+// const validateSubmission = async (code, language, testCases) => {
+//   try {
+//     const { filepath, filename } = createFile(language, code);
+//     addQueryqueue({ filepath, testcases });
+//     const verdict = await execCodeAgainstTestcases(
+//       filepath,
+//       testCases,
+//       language
+//     );
+//     return [verdict, true];
+//   } catch (error) {
+//     console.log(error);
+//     return [error, false];
+//   }
+// };

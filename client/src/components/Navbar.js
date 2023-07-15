@@ -7,7 +7,11 @@ const Navbar = () => {
   const navigate = useNavigate();
   return (
     <div className="flex justify-between py-4 px-6 bg-gray-900 text-white items-center">
-      <h1 className="font-bold text-xl">{"</>"} Codility</h1>
+      <h1
+        className="font-bold text-xl cursor-pointer"
+        onClick={() => navigate("/problems")}>
+        {"</>"} Codility
+      </h1>
       {currentUser ? (
         <h1 className="bg-white text-black font-bold p-2 rounded-xl">
           Hi {currentUser?.name}

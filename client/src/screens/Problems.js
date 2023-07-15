@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { getAllProblems } from "../apiCalls/problems";
+import { getAllProblems, getProblemById } from "../apiCalls/problems";
 import { toast } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { SetCurrentProblem, SetProblemsList } from "../redux/problemsSlice";
+import { SetProblemsList } from "../redux/problemsSlice";
+import { useNavigate } from "react-router-dom";
 
 const Problems = () => {
   const [page, setPage] = useState(1);
   const { problems: allProblems } = useSelector((state) => state.problems);
   const [problemsList, setProblemsList] = useState(allProblems);
+  const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
@@ -23,8 +25,9 @@ const Problems = () => {
     }
   };
 
-  const setProblem = (problemId) => {
-    dispatch(SetCurrentProblem(problemId));
+  const setProblem = async (problemId) => {
+    // dispatch(SetCurrentProblem(problemId));
+    navigate(`/problems/${problemId}`);
   };
 
   useEffect(() => {
@@ -39,12 +42,13 @@ const Problems = () => {
       : "#c70c02";
   };
 
-  const problemListItem = (problem) => (
+  const problemListItem = (problem, index) => (
     <tr
-      className="cursor-pointer "
+      className="cursor-pointer border border-black"
       onClick={() => setProblem(problem._id)}
       key={problem._id}>
-      <td className="p-3">{problem.title}</td>
+      <td>{index + 1}</td>
+      <td className="p-3 border border-black border-r-2">{problem.title}</td>
       <td className="p-3">
         <span
           style={{ backgroundColor: difficultyColor(problem.difficulty) }}
@@ -59,13 +63,16 @@ const Problems = () => {
     <div className="p-10 min-h-screen">
       <div className="text-left p-4">
         <h1 className="text-2xl font-bold mb-5">Problems</h1>
-        <div className="w-2/3 text-center">
-          <table className="w-full">
-            <tr>
-              <th className="w-2/3">Title</th>
-              <th className="w-1/3">Difficutly</th>
-            </tr>
-            {problemsList.map((item) => problemListItem(item))}
+        <div className="text-center items-center flex justify-center">
+          <table className="w-2/3">
+            <tbody>
+              <tr className="border border-black ">
+                <th className="w-1/4">Sr No.</th>
+                <th className="w-1/2">Title</th>
+                <th className="w-1/4">Difficutly</th>
+              </tr>
+              {problemsList.map((item, ind) => problemListItem(item, ind))}
+            </tbody>
           </table>
         </div>
       </div>

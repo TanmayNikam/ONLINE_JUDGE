@@ -5,9 +5,9 @@ const userController = require("../controllers/users");
 const submissionsController = require("../controllers/submission");
 
 // get submissions
-router.get("/", submissionsController.getSubmissions);
+router.get("/:problemId", submissionsController.getSubmissions);
 router.get(
-  "/user",
+  "/user/:problemId",
   userController.isAuthenticated,
   submissionsController.getSubmissionsOfUser
 );

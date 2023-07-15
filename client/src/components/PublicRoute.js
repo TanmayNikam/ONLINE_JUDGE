@@ -25,6 +25,7 @@ const PublicRoute = ({ children }) => {
     if (!currentUser && cookie.get("token")) fetchUser();
   }, []);
 
+
   return (
     <>
       <Navbar />
