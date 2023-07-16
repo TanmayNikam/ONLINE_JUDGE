@@ -31,9 +31,6 @@ const Login = () => {
         // dispatch(HideLoading());
         if (response.success) {
           toast.success(response.message);
-          // const userResponse = await getUser(cookie.get("token"));
-          // console.log("userResponse", userResponse);
-          // dispatch(SetUser(userResponse.user));
           navigate("/");
         } else {
           toast.error(response.message);

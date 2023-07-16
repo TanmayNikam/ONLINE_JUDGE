@@ -11,6 +11,7 @@ exports.addTestCase = async (req, res) => {
     });
     res.status(201).json({
       message: "Test Case Added",
+      testCase: newTestCase,
       success: true,
     });
   } catch (error) {
@@ -59,7 +60,7 @@ exports.deleteTestCase = async (req, res) => {
     await TestCase.findOneAndDelete({ _id: testCaseId });
     res.status(200).json({
       message: "Test Case Deleted Successfully",
-      sucess: true,
+      success: true,
     });
   } catch (error) {
     console.log(error);
@@ -72,7 +73,7 @@ exports.getTestCasesByProblem = async (req, res) => {
     const { problemId } = req.params;
     const testCases = await TestCase.find({ problem: problemId });
     res.status(200).json({
-      data: testCases,
+      testCases,
       success: true,
     });
   } catch (error) {

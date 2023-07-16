@@ -17,7 +17,7 @@ app.use(cors());
 
 app.use("/api/users", userRouter);
 app.use("/api/problems", problemsRouter);
-app.use("/api/testCase", testCaseRouter);
+app.use("/api/testCases", testCaseRouter);
 app.use("/api/submissions", submissionRouter);
 
 module.exports = app;

@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useParams } from "react-router-dom";
+// import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { getSubmissions } from "../apiCalls/submissions";
 import cookie from "js-cookie";
 import toast from "react-hot-toast";
-import CodeModal from "../components/CodeModal";
+import { BiArrowBack } from "react-icons/bi";
+import Modal from "../components/Modal";
+// import CodeModal from "../components/CodeModal";
+// import Modal from "../components/Modal";
 
 const Submissions = () => {
   const location = useLocation();
   const submissionType = location.pathname.includes("all") ? "All" : "My";
   const [submissions, setSubmissions] = useState([]);
-  const [showCode, setShowCode] = useState(false);
+  const [showCode, setShowCode] = useState("");
   let userToken = "";
   const { problemId } = useParams();
   if (cookie.get("token")) userToken = cookie.get("token");
+  const navigate = useNavigate();
 
   const langName = {
     py: "Python",
@@ -48,9 +52,13 @@ const Submissions = () => {
 
   return (
     <>
-      {showCode && <CodeModal />}
+      {showCode && <Modal showModal={showCode} setShowModal={setShowCode} />}
       <div>
         <div className="text-left p-10">
+          <BiArrowBack
+            className="text-3xl mb-3 cursor-pointer"
+            onClick={() => navigate(`/problems/${problemId}`)}
+          />
           <h1 className="text-2xl font-bold">{submissionType} Submissions</h1>
           <div className="p-10 text-center items-center flex justify-center">
             <table className="w-3/4 border border-black">
@@ -71,14 +79,16 @@ const Submissions = () => {
                   <th className="border border-black border-r-2 font-bold">
                     Verdict
                   </th>
-                  <th className="border border-black border-r-2 font-bold">
-                    Code
-                  </th>
+                  {submissionType === "My" && (
+                    <th className="border border-black border-r-2 font-bold">
+                      Code
+                    </th>
+                  )}
                   {/* <th>Username</th> */}
                 </tr>
                 {submissions &&
                   submissions.map((item) => (
-                    <tr className="p-4">
+                    <tr className="p-4" key={item._id}>
                       <td className="border border-black border-r-2 font-semibold">
                         {item.user.username}
                       </td>
@@ -96,22 +106,18 @@ const Submissions = () => {
                         style={{ color: verdictColor(item.verdict) }}>
                         {item.verdict}
                       </td>
-                      <td className="border border-black border-r-2 font-semibold">
-                        {/* <!--Button trigger vertically centered scrollable modal--> */}
-                        <button
-                          type="button"
-                          class="inline-block bg-red-500 px-2 py-1 m-1 rounded-md text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-                          data-te-toggle="modal"
-                          data-te-target="#exampleModalCenteredScrollable"
-                          data-te-ripple-init
-                          data-te-ripple-color="light"
-                          onClick={() => setShowCode(true)}>
-                          {"</>"}
-                        </button>
-                        {/* <button className="bg-red-500 roundex-xl p-1 m-1">
-                        {"</>"}
-                      </button> */}
-                      </td>
+                      {submissionType === "My" && (
+                        <td className="border border-black border-r-2 font-semibold">
+                          <button
+                            type="button"
+                            data-modal-target="defaultModal"
+                            data-modal-toggle="defaultModal"
+                            onClick={() => setShowCode(item._id)}
+                            className="bg-red-500 rounded-lg p-1">
+                            {"</>"}
+                          </button>
+                        </td>
+                      )}
                     </tr>
                   ))}
               </tbody>

@@ -44,7 +44,7 @@ const Problem = () => {
     if (!user) toast.error("Login to submit solution");
     if (!code) toast.error("Enter code for submission");
     try {
-      console.log(language, code);
+      // console.log(language, code);
       const response = await addSubmission(
         language,
         code,
@@ -65,6 +65,11 @@ const Problem = () => {
         <div className="w-full text-left p-10">
           <div className="flex gap-4 mb-5">
             <button
+              className="border border-blue-500 p-2 rounded-md"
+              onClick={() => navigate(`/problems`)}>
+              <span className="text-lg">{"<"}</span> Problems
+            </button>
+            <button
               className="border border-red-500 p-2 rounded-md"
               onClick={() => navigate(`/submissions/my/${problem._id}`)}>
               My Submissions <span className="text-lg">{">"}</span>
@@ -76,7 +81,7 @@ const Problem = () => {
             </button>
           </div>
           <div className="w-full flex h-[75vh] gap-10">
-            <div className="w-1/2 border border-black p-3">
+            <div className="w-1/2 border border-black p-3 overflow-y-auto">
               <h1 className="text-xl font-semibold mb-2">Problem Statement</h1>
               <p className="mb-2">{problem?.description}</p>
               <h1 className="text-lg font-semibold mb-2">Input Format</h1>

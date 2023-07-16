@@ -1,10 +1,22 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { FiLogOut } from "react-icons/fi";
+import cookie from "js-cookie";
+import { Logout } from "../redux/userSlice";
+
 const Navbar = () => {
   const { user: currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
+
+  const logout = () => {
+    cookie.remove("token");
+    dispatch(Logout());
+    navigate("/login");
+  };
+
   return (
     <div className="flex justify-between py-4 px-6 bg-gray-900 text-white items-center">
       <h1
@@ -13,8 +25,10 @@ const Navbar = () => {
         {"</>"} Codility
       </h1>
       {currentUser ? (
-        <h1 className="bg-white text-black font-bold p-2 rounded-xl">
+        <h1 className="bg-white text-black font-bold p-2 rounded-xl flex gap-4 items-center">
           Hi {currentUser?.name}
+          &nbsp;{" "}
+          <FiLogOut className="text-xl cursor-pointer" onClick={logout  } />
         </h1>
       ) : (
         <button

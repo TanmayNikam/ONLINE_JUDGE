@@ -2,8 +2,7 @@ const Problem = require("../models/problems");
 
 exports.getProblems = async (req, res) => {
   try {
-    const problems = await Problem.find({})
-      .select("title difficulty _id");
+    const problems = await Problem.find({}).select("title difficulty _id");
 
     res.status(200).json({
       problems,
@@ -31,21 +30,14 @@ exports.getProblemById = async (req, res) => {
 
 exports.addProblem = async (req, res) => {
   try {
-    const { title, description, ipFormat, opFormat, difficulty, timelimit } =
-      req.body;
     // let inputText = text.replace(/\r?\n/g, "\n");
     // let input = req.body.input.replace;
+    console.log(req.body);
 
-    const newProblem = await Problem.create({
-      title,
-      description,
-      ipFormat,
-      opFormat,
-      difficulty,
-      timelimit,
-    });
+    const newProblem = await Problem.create(req.body);
     res.status(201).json({
       message: "Problem added successfully",
+      problem: newProblem,
       success: true,
     });
   } catch (error) {

@@ -34,3 +34,14 @@ export const getSubmissions = async (type, token = "", problemId) => {
     return error;
   }
 };
+
+export const getSubmissionCode = async (submissionId) => {
+  try {
+    const response = await axios.get(`/api/submissions/code/${submissionId}`);
+    return response.data;
+  } catch (error) {
+    if ("response" in error && "data" in error.response)
+      return error.response.data;
+    return error;
+  }
+};

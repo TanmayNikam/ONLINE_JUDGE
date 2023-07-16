@@ -15,8 +15,14 @@ const problemScehma = new mongoose.Schema({
   opFormat: {
     type: String,
   },
-  constraints:{
-    type:String,
+  constraints: {
+    type: String,
+  },
+  sampleInput: {
+    type: String,
+  },
+  sampleOutput: {
+    type: String,
   },
   difficulty: {
     type: String,
