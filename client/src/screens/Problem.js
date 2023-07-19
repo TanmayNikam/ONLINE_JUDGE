@@ -67,7 +67,7 @@ const Problem = () => {
           <div className="flex gap-4 mb-5">
             <button
               className="border border-blue-500 p-2 rounded-md"
-              onClick={() => navigate(`/problems`)}>
+              onClick={() => navigate(`/`)}>
               <span className="text-lg">{"<"}</span> Problems
             </button>
             <button
