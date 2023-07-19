@@ -38,7 +38,7 @@ const Problem = () => {
 
   useEffect(() => {
     if (!problem) fetchProblem();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const submitSubmission = async () => {
@@ -89,6 +89,18 @@ const Problem = () => {
               <p className="mb-2">{problem?.ipFormat}</p>
               <h1 className="text-lg font-semibold mb-2">Output Format</h1>
               <p className="mb-2">{problem?.opFormat}</p>
+              <h1 className="text-lg font-semibold mb-2">Sample Input</h1>
+              <textarea
+                className="border border-black rounded-lg w-full h-[15vh] p-3"
+                value={problem?.sampleInput}
+                disabled
+              />
+              <h1 className="text-lg font-semibold mb-2">Sample Output</h1>
+              <textarea
+                className="border border-black rounded-lg w-full h-[15vh] p-3"
+                value={problem?.sampleOutput}
+                disabled
+              />
             </div>
             <div className="w-1/2 h-[70vh]">
               <div className="flex gap-4 mb-5">
