@@ -33,7 +33,6 @@ const Register = () => {
         // dispatch(ShowLoading());
         const response = await register(user);
         // dispatch(HideLoading());
-        console.log(response);
         if (response.success) {
           toast.success(response.message);
           navigate("/login");

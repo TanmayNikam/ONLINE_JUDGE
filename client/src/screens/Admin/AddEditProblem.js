@@ -60,6 +60,7 @@ const AddEditProblem = () => {
 
   useEffect(() => {
     if (isEdit) fetchProblem();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChange = (name) => (e) => {

@@ -21,7 +21,7 @@ const Navbar = () => {
     <div className="flex justify-between py-4 px-6 bg-gray-900 text-white items-center">
       <h1
         className="font-bold text-xl cursor-pointer"
-        onClick={() => navigate("/problems")}>
+        onClick={() => navigate("/")}>
         {"</>"} NodeJudge
       </h1>
       {currentUser ? (

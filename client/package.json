@@ -49,5 +49,5 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "tailwindcss": "^3.3.2"
   },
-  "proxy": "http://localhost:8000"
+  "proxy": "http://localhost:5000"
 }

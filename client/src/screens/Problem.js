@@ -38,6 +38,7 @@ const Problem = () => {
 
   useEffect(() => {
     if (!problem) fetchProblem();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const submitSubmission = async () => {

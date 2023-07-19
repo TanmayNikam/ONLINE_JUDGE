@@ -38,6 +38,7 @@ const Problems = () => {
 
   useEffect(() => {
     if (problemsList?.length === 0) fetchProblems();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handlePageChange = (name) => {
@@ -101,7 +102,7 @@ const Problems = () => {
       {isAdminPage && (
         <BiArrowBack
           className="text-3xl mb-3 cursor-pointer"
-          onClick={() => navigate("/problems")}
+          onClick={() => navigate("/")}
         />
       )}
       <div className="text-left p-4">

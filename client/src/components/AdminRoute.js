@@ -34,6 +34,7 @@ const AdminRoute = ({ children }) => {
   useEffect(() => {
     if (!cookie.get("token")) navigate("/login");
     else if (!currentUser) fetchUser();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

@@ -23,6 +23,7 @@ const PublicRoute = ({ children }) => {
 
   useEffect(() => {
     if (!currentUser && cookie.get("token")) fetchUser();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 

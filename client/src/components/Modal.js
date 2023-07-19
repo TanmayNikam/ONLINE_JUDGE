@@ -7,7 +7,6 @@ const Modal = ({ showModal, setShowModal }) => {
   const fetchCode = async () => {
     try {
       const response = await getSubmissionCode(showModal);
-      console.log(response);
       if (response.success) setCode(response.code.code);
       else toast.error(response.message);
     } catch (error) {
@@ -17,6 +16,7 @@ const Modal = ({ showModal, setShowModal }) => {
   };
   useEffect(() => {
     if (!code) fetchCode();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
