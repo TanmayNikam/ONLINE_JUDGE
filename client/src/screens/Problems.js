@@ -9,6 +9,7 @@ import { BiArrowBack } from "react-icons/bi";
 
 const Problems = () => {
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const location = useLocation();
   const isAdminPage = location.pathname.includes("admin");
   const isAdmin = useSelector((state) => state.user.user?.isadmin);
@@ -27,6 +28,7 @@ const Problems = () => {
       const response = await getAllProblems();
       if (!response.success) toast.error(response.message);
       setProblemsList(response.problems);
+
       dispatch(SetProblemsList(response.problems));
     } catch (error) {
       toast.error("Error fetching problems");
@@ -38,6 +40,14 @@ const Problems = () => {
     if (problemsList?.length === 0) fetchProblems();
   }, []);
 
+  const handlePageChange = (name) => {
+    if (name === "next") {
+      if (page < totalPages) setPage(page + 1);
+    } else {
+      if (page > 1) setPage(page - 1);
+    }
+  };
+
   useEffect(() => {
     let newProblemsList =
       difficultyFilter === "All"
@@ -45,8 +55,10 @@ const Problems = () => {
         : allProblems?.filter((item) => item.difficulty === difficultyFilter);
     if (searchKey)
       newProblemsList = newProblemsList?.filter((item) =>
-        item.title.toLowerCase().includes(searchKey)
+        item.title.toLowerCase().includes(searchKey.toLowerCase())
       );
+    // newProblemsList = newProblemsList.slice((page - 1) * 10, 10);
+    setTotalPages(Math.ceil(newProblemsList?.length / 10));
     setProblemsList(newProblemsList);
   }, [difficultyFilter, searchKey, allProblems]);
 
@@ -60,7 +72,6 @@ const Problems = () => {
 
   const problemListItem = (problem, index) => (
     <tr className="cursor-pointer border border-black" key={problem._id}>
-      <td>{index + 1}</td>
       <td className="p-3 border border-black">
         <Link to={`/problems/${problem._id}`} className="hover:underline">
           {problem.title}
@@ -117,34 +128,61 @@ const Problems = () => {
               placeholder="Search Problem"
               className="border border-black py-2 px-4 rounded-full w-1/3"
               value={searchKey}
-              onChange={(e) => setSearchKey(e.target.value)}
+              onChange={(e) => {
+                setSearchKey(e.target.value);
+                // setPage(1);
+              }}
             />
             <div className="flex gap-5 items-center">
               <label>Difficulty</label>
               <select
                 value={difficultyFilter}
-                onChange={(e) => setDifficultyFilter(e.target.value)}
+                onChange={(e) => {
+                  setDifficultyFilter(e.target.value);
+                  // setPage(1);
+                }}
                 className="p-2 rounded-lg border border-black">
                 {difficulties.map((item) => (
-                  <option value={item}>{item}</option>
+                  <option value={item} key={item}>
+                    {item}
+                  </option>
                 ))}
               </select>
             </div>
           </div>
         </div>
+
         <div className="text-center items-center flex justify-center">
           <table className="w-2/3">
             <tbody>
               <tr className="border border-black ">
-                <th className={isAdmin ? "w-1/5" : "w-1/4"}>Sr No.</th>
                 <th className={isAdmin ? "w-2/5" : "w-1/2"}>Title</th>
                 <th className={isAdmin ? "w-1/5" : "w-1/4"}>Difficutly</th>
                 {isAdminPage && <th className="w-1/5">Actions</th>}
               </tr>
-              {problemsList?.map((item, ind) => problemListItem(item, ind))}
+              {problemsList
+                ?.slice(
+                  (page - 1) * 10,
+                  Math.min(problemsList.length, page * 10)
+                )
+                .map((item, ind) => problemListItem(item, ind))}
             </tbody>
           </table>
         </div>
+        {totalPages > 1 && (
+          <div className="flex justify-end w-5/6 gap-4 mt-4">
+            <button
+              className="p-2 border border-black rounded-lg cursor-pointer"
+              onClick={() => handlePageChange("prev")}>
+              {"<"} Prev
+            </button>
+            <button
+              className="p-2 border border-black rounded-lg cursor-pointer"
+              onClick={() => handlePageChange("next")}>
+              Next {">"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

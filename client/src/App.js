@@ -3,7 +3,6 @@ import { Toaster } from "react-hot-toast";
 import "./App.css";
 import Login from "./screens/Login";
 import Register from "./screens/Register";
-import Home from "./screens/Home";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Problems from "./screens/Problems";
 import PublicRoute from "./components/PublicRoute";
@@ -18,16 +17,16 @@ function App() {
       <Toaster position="top-center" reverseOrder={false} />
       <BrowserRouter>
         <Routes>
-          <Route
+          {/* <Route
             path="/"
             element={
               <ProtectedRoute>
                 <Home />
               </ProtectedRoute>
             }
-          />
+          /> */}
           <Route
-            path="/problems"
+            path="/"
             element={
               <PublicRoute>
                 <Problems />

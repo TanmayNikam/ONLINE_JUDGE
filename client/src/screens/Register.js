@@ -20,7 +20,12 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (user.username === "" || user.name === "" || user.email === "" || user.password === "")
+    if (
+      user.username === "" ||
+      user.name === "" ||
+      user.email === "" ||
+      user.password === ""
+    )
       toast.error("Please Fill every field");
     else if (!validateEmail(user.email)) toast.error("Enter valid Email Id");
     else {
@@ -46,7 +51,7 @@ const Register = () => {
         <div className="bg-white rounded-lg overflow-hidden shadow-md">
           <div className="px-6 py-8">
             <h2 className="text-center text-3xl font-extrabold text-gray-900 mb-4">
-              Codility
+              NodeJudge
             </h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
@@ -122,7 +127,7 @@ const Register = () => {
                 </button>
               </div>
               <div className="text-center mt-4">
-                <Link className="mt-3" to="/login">
+                <Link className="mt-3 hover:underline" to="/login">
                   Login Here
                 </Link>
               </div>

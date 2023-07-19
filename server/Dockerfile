@@ -6,3 +6,4 @@ EXPOSE 6379
 
 # Start the Redis server
 CMD ["redis-server"]
+

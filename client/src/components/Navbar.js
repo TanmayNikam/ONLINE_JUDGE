@@ -22,7 +22,7 @@ const Navbar = () => {
       <h1
         className="font-bold text-xl cursor-pointer"
         onClick={() => navigate("/problems")}>
-        {"</>"} Codility
+        {"</>"} NodeJudge
       </h1>
       {currentUser ? (
         <h1 className="bg-white text-black font-bold p-2 rounded-xl flex gap-4 items-center">

@@ -49,7 +49,7 @@ const Login = () => {
         <div className="bg-white rounded-lg overflow-hidden shadow-md">
           <div className="px-6 py-8">
             <h2 className="text-center text-3xl font-extrabold text-gray-900 mb-4">
-              Codility
+              NodeJudge
             </h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
@@ -92,7 +92,7 @@ const Login = () => {
                 </button>
               </div>
               <div className="text-center mt-4">
-                <Link className="mt-3" to="/signup">
+                <Link className="mt-3 hover:underline" to="/signup">
                   Register Here
                 </Link>
               </div>
