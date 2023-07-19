@@ -4,7 +4,7 @@ const path = require("path");
 const createContainer = ({ name, image }) => {
   return new Promise((resolve, reject) => {
     exec(
-      `docker run -i -d --rm --name ${name} ${image}`,
+      `sudo docker run -i -d --rm --name ${name} ${image}`,
       (error, stdout, stderr) => {
         (error || stderr) && reject({ msg: "on docker error", error, stderr });
         const containerId = `${stdout}`.trim();
@@ -16,7 +16,7 @@ const createContainer = ({ name, image }) => {
 
 const stopContainer = (container_id_name) => {
   return new Promise((resolve, reject) => {
-    exec(`docker stop ${container_id_name}`, (error, stdout, stderr) => {
+    exec(`sudo docker stop ${container_id_name}`, (error, stdout, stderr) => {
       stdout && console.log("Deleted(stopped) :", stdout);
       resolve();
     });
@@ -25,7 +25,7 @@ const stopContainer = (container_id_name) => {
 
 const killContainer = (container_id_name) => {
   return new Promise((resolve, reject) => {
-    exec(`docker kill ${container_id_name}`, (error, stdout, stderr) => {
+    exec(`sudo docker kill ${container_id_name}`, (error, stdout, stderr) => {
       stdout && console.log("Deleted(stopped) :", stdout);
       resolve();
     });
@@ -36,7 +36,7 @@ const copyFilesToDocker = (filePath, containerId) => {
   const filename = path.basename(filePath);
   return new Promise((resolve, reject) => {
     exec(
-      `docker cp "${filePath}" ${containerId}:/${filename}`,
+      `sudo docker cp "${filePath}" ${containerId}:/${filename}`,
       (error, stdout, stderr) => {
         error && reject({ msg: "on error", error, stderr });
         stderr && reject({ msg: "on stderr", stderr });
@@ -51,7 +51,7 @@ const deleteFileDocker = (filename, containerId) => {
     const fileExists = await fileExistsDocker(filename, containerId);
     if (!fileExists) return resolve("file does not exists");
     exec(
-      `docker exec ${containerId} rm ${filename}`,
+      `sudo docker exec ${containerId} rm ${filename}`,
       (error, stdout, stderr) => {
         error && reject({ msg: "on error", error, stderr });
         stderr && reject({ msg: "on stderr", stderr });
@@ -64,7 +64,7 @@ const deleteFileDocker = (filename, containerId) => {
 const fileExistsDocker = (filename, containerId) => {
   return new Promise((resolve, reject) => {
     exec(
-      `docker exec ${containerId} sh -c "test -f '${filename}' && echo 'true'"`,
+      `sudo docker exec ${containerId} sh -c "test -f '${filename}' && echo 'true'"`,
       (error, stdout, stderr) => {
         resolve(stdout.trim() === "true");
       }
@@ -103,7 +103,7 @@ const compile = (containerId, filename, language) => {
     : null;
   return new Promise((resolve, reject) => {
     if (!command) return resolve(filename);
-    exec(`docker exec ${containerId} ${command}`, (error, stdout, stderr) => {
+    exec(`sudo docker exec ${containerId} ${command}`, (error, stdout, stderr) => {
       error && reject({ msg: "on compile error", error, stderr });
       stderr && reject({ msg: "on compile stderr", stderr });
       resolve({ id });
@@ -120,7 +120,7 @@ const execute = (containerId, id, testInput, language) => {
   return new Promise((resolve, reject) => {
     let codeOutput = "";
     if (!command) return reject("Language Not Supported");
-    const cmd = spawn("docker", ["exec", "-i", `${containerId} ${command}`], {
+    const cmd = spawn("sudo docker", ["exec", "-i", `${containerId} ${command}`], {
       shell: true,
     });
     cmd.on("spawn", () => {
