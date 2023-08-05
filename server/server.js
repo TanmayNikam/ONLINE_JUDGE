@@ -7,7 +7,7 @@ const {
 } = require("./controllers/codeExecutor/codeExecute");
 
 DBConnection();
-initAllDockerContainers(); //init all docker containers for languages
+// initAllDockerContainers(); //init all docker containers for languages
 
 // if (process.env.NODE_ENV === "production") {
 app.use("/", express.static(path.join(__dirname, "./build")));

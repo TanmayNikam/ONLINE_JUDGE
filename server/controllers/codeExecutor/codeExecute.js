@@ -25,7 +25,6 @@ const containerNames = [
   "java-oj-container",
 ];
 
-/** @type {string[]} */
 const containerIds = [];
 const initDockerContainer = (image, index) => {
   const name = containerNames[index];
@@ -57,27 +56,22 @@ const initAllDockerContainers = async () => {
 const languageSpecificDetails = {
   c: {
     compiledExtension: "out",
-    inputFunction: null,
     containerId: () => containerIds[imageIndex.GCC],
   },
   cpp: {
     compiledExtension: "out",
-    inputFunction: null,
     containerId: () => containerIds[imageIndex.GCC],
   },
   py: {
     compiledExtension: "",
-    inputFunction: null,
     containerId: () => containerIds[imageIndex.PY],
   },
   js: {
     compiledExtension: "",
-    inputFunction: null,
     containerId: () => containerIds[imageIndex.JS],
   },
   java: {
     compiledExtension: "class",
-    inputFunction: null,
     containerId: () => containerIds[imageIndex.JAVA],
   },
 };
@@ -178,17 +172,6 @@ const execCodeAgainstTestcases = (filePath, testcases, language) => {
         if (filename) {
           await deleteFileDocker(filename, containerId);
         }
-        if (filename && languageSpecificDetails[language].compiledExtension) {
-          // TODO: Update 'Solution.class' to id.class
-          await deleteFileDocker(
-            language === "java"
-              ? "Solution.class"
-              : filename.split(".")[0] +
-                  "." +
-                  languageSpecificDetails[language].compiledExtension,
-            containerId
-          );
-        }
       } catch (error) {
         console.error(
           "Caught some errors while deleting files from Docker Container",
@@ -216,14 +199,7 @@ const execCode = async (filePath, language, inputString) => {
   try {
     filename = await copyFilesToDocker(filePath, containerId);
     const compiledId = await compile(containerId, filename, language);
-    const exOut = await execute(
-      containerId,
-      compiledId,
-      languageSpecificDetails[language].inputFunction
-        ? languageSpecificDetails[language].inputFunction(inputString)
-        : inputString,
-      language
-    );
+    const exOut = await execute(containerId, compiledId, inputString, language);
     return { msg: "Compiled Successfully", stdout: exOut };
   } catch (error) {
     return error;
@@ -231,17 +207,6 @@ const execCode = async (filePath, language, inputString) => {
     try {
       if (filename) await deleteFileDocker(filename, containerId);
 
-      if (filename && languageSpecificDetails[language].compiledExtension) {
-        // TODO: Update 'Solution.class' to id.class
-        await deleteFileDocker(
-          language === "java"
-            ? "Solution.class"
-            : filename.split(".")[0] +
-                "." +
-                languageSpecificDetails[language].compiledExtension,
-          containerId
-        );
-      }
     } catch (error) {
       console.error(
         "Caught some errors while deleting files from Docker Container",

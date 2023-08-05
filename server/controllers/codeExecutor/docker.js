@@ -96,20 +96,20 @@ const details = {
 };
 
 // Compile
-const compile = (containerId, filename, language) => {
-  const id = filename.split(".")[0];
-  const command = details[language].compilerCmd
-    ? details[language].compilerCmd(id)
-    : null;
-  return new Promise((resolve, reject) => {
-    if (!command) return resolve(filename);
-    exec(`sudo docker exec ${containerId} ${command}`, (error, stdout, stderr) => {
-      error && reject({ msg: "on compile error", error, stderr });
-      stderr && reject({ msg: "on compile stderr", stderr });
-      resolve({ id });
+  const compile = (containerId, filename, language) => {
+    const id = filename.split(".")[0];
+    const command = details[language].compilerCmd
+      ? details[language].compilerCmd(id)
+      : null;
+    return new Promise((resolve, reject) => {
+      if (!command) return resolve(filename);
+      exec(`sudo docker exec ${containerId} ${command}`, (error, stdout, stderr) => {
+        error && reject({ msg: "on compile error", error, stderr });
+        stderr && reject({ msg: "on compile stderr", stderr });
+        resolve({ id });
+      });
     });
-  });
-};
+  };
 
 // Execute
 // spawn("docker", ["exec", "-i", containerId, "sh -c", command]

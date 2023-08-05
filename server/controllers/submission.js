@@ -4,7 +4,11 @@ const { getTestCasesByProblem } = require("./testCases");
 const {
   createFile,
   execCodeAgainstTestcases,
-} = require("./codeExecutor/codeExecute");
+} = require("./codeExecutor/codeExecute_noDocker");
+// const {
+//   createFile,
+//   execCodeAgainstTestcases,
+// } = require("./codeExecutor/codeExecute");
 
 const { addQueryqueue } = require("./codeExecutor/queryQueue");
 
@@ -96,6 +100,7 @@ exports.addSubmission = async (req, res) => {
     });
 
     const { filepath, filename } = createFile(language, code);
+    // console.log("filepath: ", filepath);
 
     const queryData = {
       filepath,

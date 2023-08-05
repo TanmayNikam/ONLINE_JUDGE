@@ -4,7 +4,11 @@ const path = require("path");
 const TestCase = require("../../models/testCases");
 const Submission = require("../../models/submissions.js");
 
-const { execCodeAgainstTestcases, deleteFile } = require("./codeExecute.js");
+// const { execCodeAgainstTestcases, deleteFile } = require("./codeExecute.js");
+const {
+  execCodeAgainstTestcases,
+  deleteFile,
+} = require("./codeExecute_noDocker.js");
 
 const WORKERS_NUMBER = 5;
 const QUEUE_CONFIG = {
@@ -31,6 +35,7 @@ queryQueue.process(WORKERS_NUMBER, async (data) => {
       testCases,
       submission.language
     );
+    console.log("verdict: ", verdict);
     let verdictMessage;
     if (verdict.time > submission.problem.timelimit)
       verdictMessage = "Time Limit Exceeded";
@@ -41,6 +46,7 @@ queryQueue.process(WORKERS_NUMBER, async (data) => {
       runtime: verdict.time,
     });
   } catch (error) {
+    console.log("error: ", error);
     let verdictMessage = "pending";
     switch (error.msg) {
       case "Wrong Answer":
